@@ -6,6 +6,21 @@ using namespace std;
 using std::cin;
 using std::cout;
 
+vector<char> findOccurrences(const vector<char> &characters, char character)
+{
+    vector<char> occurrences;
+
+    for (int i = 0; i < characters.size(); ++i)
+    {
+        if (characters[i] == character)
+        {
+            occurrences.push_back(characters[i]);
+        }
+    }
+
+    return occurrences;
+}
+
 class Player
 {
 public:
@@ -84,7 +99,7 @@ int getMove(Player currentPlayer)
 
     cout << "(" + name + ")" + " Enter coordinate between 1-9 :\n";
     cin >> coordinate;
-    
+
     // subtract one so it is more human friendly
     // as opposed to indexing the grid
     return coordinate - 1;
@@ -175,14 +190,53 @@ Player getCurrentPlayer(int numMoves, Player player1, Player player2)
     return player2;
 }
 
+bool intVectorIncludes(const vector<int> &vec, int target)
+{
+    return std::find(vec.begin(), vec.end(), target) != vec.end();
+}
+
+vector<char> removeCharacter(vector<char> &characters, char characterToRemove)
+{
+    vector<char> temp = characters;
+    temp.erase(std::remove(temp.begin(), temp.end(), characterToRemove), temp.end());
+
+    return temp;
+}
+
+bool getIsGameWon(vector<char> grid, Player player1, Player player2)
+{
+    vector<char> topLeftToBottomRight;
+    vector<char> topRightToBottomLeft;
+    vector<int> topLeftToBottomRightIndices = {0, 4, 8};
+    vector<int> topRightToBottomLeftIndices = {2, 4, 6};
+
+    for (int x = 0; x < grid.size(); x++)
+    {
+        // check diagonals
+        if (intVectorIncludes(topLeftToBottomRightIndices, x))
+        {
+            topLeftToBottomRight.push_back(grid[x]);
+        }
+        else if (intVectorIncludes(topRightToBottomLeftIndices, x))
+        {
+            topRightToBottomLeft.push_back(grid[x]);
+        }
+    }
+
+    vector<char> player1Diagonals = removeCharacter(topRightToBottomLeft, player2.character);
+
+    return false;
+}
+
 int main()
 {
     vector<char> grid = buildGrid();
     int numMoves = 0;
+    bool isGameWon = false;
     Player player1 = getPlayer1();
     Player player2 = getPlayer2();
 
-    while (numMoves < 9)
+    while (numMoves < 9 && !isGameWon)
     {
         Player currentPlayer = getCurrentPlayer(numMoves, player1, player2);
         int moveIndex = getMove(currentPlayer);
@@ -190,6 +244,7 @@ int main()
         vector<char> newGrid = applyUserInput(grid, moveIndex, currentPlayer);
         printGrid(newGrid);
 
+        isGameWon = getIsGameWon(newGrid, player1, player2);
         grid = newGrid;
         numMoves++;
     }
