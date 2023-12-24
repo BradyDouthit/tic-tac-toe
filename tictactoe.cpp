@@ -13,44 +13,40 @@ public:
     string nickname;
 };
 
-void printGrid(vector<string> grid)
+void printGrid(vector<char> grid)
 {
     int length = grid.size();
+    int endPositions[3] = {2, 5, 8};
 
     for (int x = 0; x < length; x++)
     {
-        cout << grid[x];
+        bool isEndOfGrid = std::find(std::begin(endPositions), std::end(endPositions), x) != std::end(endPositions);
+        if (isEndOfGrid)
+        {
+            cout << grid[x] << '\n';
+        }
+        else
+        {
+            cout << grid[x];
+        }
     }
 }
 
-vector<string> buildGrid()
+vector<char> buildGrid()
 {
-    const int gridSizeX = 3;
-    const int gridSizeY = 3;
+    int gridSize = 9;
+    vector<char> grid = {};
 
-    vector<string> grid = {};
-
-    for (int x = 0; x < gridSizeX; x++)
+    for (int x = 0; x < gridSize; x++)
     {
-        for (int y = 0; y < gridSizeY; y++)
-        {
-            if (y == gridSizeY - 1)
-            {
-                string separator = "-\n";
-                grid.push_back(separator);
-            }
-            else
-            {
-                string separator = "-";
-                grid.push_back(separator);
-            }
-        }
+        char separator = '-';
+        grid.push_back(separator);
     }
 
     return grid;
 }
 
-bool validatePlayerMove(vector<string> grid, int index)
+bool validatePlayerMove(vector<char> grid, int index)
 {
     if (index > grid.size())
     {
@@ -63,11 +59,9 @@ bool validatePlayerMove(vector<string> grid, int index)
     }
     else
     {
-        string stringAtIndex = grid[index];
-        string empty = "-";
+        char stringAtIndex = grid[index];
+        char empty = '-';
 
-        // remove newlines from the grid at index position
-        stringAtIndex.erase(remove(stringAtIndex.begin(), stringAtIndex.end(), '\n'), stringAtIndex.end());
         bool positionIsEmpty = stringAtIndex == empty;
 
         if (!positionIsEmpty)
@@ -86,35 +80,28 @@ int getMove(Player currentPlayer)
 
     cout << "(" + name + ")" + " Enter coordinate between 1-9 :\n";
     cin >> coordinate;
-
+    
     // subtract one so it is more human friendly
     // as opposed to indexing the grid
     return coordinate - 1;
 }
 
-vector<string> addCharacterToGrid(vector<string> grid, int gridIndex, char character)
+vector<char> addCharacterToGrid(vector<char> grid, int gridIndex, char character)
 {
-    vector<string> tempGrid = grid;
+    vector<char> tempGrid = grid;
     int gridWidth = grid.size() / 3 - 1;
     int endPositions[3] = {2, 5, 8};
     bool isEndOfGrid = std::find(std::begin(endPositions), std::end(endPositions), gridIndex) != std::end(endPositions);
 
-    if (isEndOfGrid)
-    {
-        tempGrid[gridIndex] = character + "\n";
-    }
-    else
-    {
-        tempGrid[gridIndex] = character;
-    }
+    tempGrid[gridIndex] = character;
 
     return tempGrid;
 }
 
-vector<string> applyUserInput(vector<string> grid, int gridIndex, Player player)
+vector<char> applyUserInput(vector<char> grid, int gridIndex, Player player)
 {
     char playerCharacter = player.character;
-    vector<string> tempGrid = grid;
+    vector<char> tempGrid = grid;
 
     if (validatePlayerMove(tempGrid, gridIndex))
     {
@@ -123,7 +110,7 @@ vector<string> applyUserInput(vector<string> grid, int gridIndex, Player player)
     else
     {
         int newIndex = -1;
-
+        cout << newIndex << "\n";
         while (!validatePlayerMove(tempGrid, newIndex))
         {
             cout << "Invalid move. Enter a new number\n";
@@ -186,7 +173,7 @@ Player getCurrentPlayer(int numMoves, Player player1, Player player2)
 
 int main()
 {
-    vector<string> grid = buildGrid();
+    vector<char> grid = buildGrid();
     int numMoves = 0;
     Player player1 = getPlayer1();
     Player player2 = getPlayer2();
@@ -196,7 +183,7 @@ int main()
         Player currentPlayer = getCurrentPlayer(numMoves, player1, player2);
         int moveIndex = getMove(currentPlayer);
 
-        vector<string> newGrid = applyUserInput(grid, moveIndex, currentPlayer);
+        vector<char> newGrid = applyUserInput(grid, moveIndex, currentPlayer);
         printGrid(newGrid);
 
         grid = newGrid;
