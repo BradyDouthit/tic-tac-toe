@@ -65,7 +65,6 @@ bool validatePlayerMove(vector<string> grid, int index)
     {
         string stringAtIndex = grid[index];
         string empty = "-";
-        string emptyAtEnd = empty + "\n";
 
         // remove newlines from the grid at index position
         stringAtIndex.erase(remove(stringAtIndex.begin(), stringAtIndex.end(), '\n'), stringAtIndex.end());
@@ -78,6 +77,19 @@ bool validatePlayerMove(vector<string> grid, int index)
     }
 
     return true;
+}
+
+int getMove(Player currentPlayer)
+{
+    string name = currentPlayer.nickname;
+    int coordinate;
+
+    cout << "(" + name + ")" + " Enter coordinate between 1-9 :\n";
+    cin >> coordinate;
+
+    // subtract one so it is more human friendly
+    // as opposed to indexing the grid
+    return coordinate - 1;
 }
 
 vector<string> addCharacterToGrid(vector<string> grid, int gridIndex, char character)
@@ -103,14 +115,9 @@ vector<string> applyUserInput(vector<string> grid, int gridIndex, Player player)
 {
     char playerCharacter = player.character;
     vector<string> tempGrid = grid;
-    int gridWidth = grid.size() / 3 - 1;
-    int endPositions[3] = {2, 5, 8};
-    bool isEndOfGrid = std::find(std::begin(endPositions), std::end(endPositions), gridIndex) != std::end(endPositions);
 
     if (validatePlayerMove(tempGrid, gridIndex))
     {
-        cout << "VALID\n";
-
         tempGrid = addCharacterToGrid(tempGrid, gridIndex, playerCharacter);
     }
     else
@@ -120,7 +127,7 @@ vector<string> applyUserInput(vector<string> grid, int gridIndex, Player player)
         while (!validatePlayerMove(tempGrid, newIndex))
         {
             cout << "Invalid move. Enter a new number\n";
-            cin >> newIndex;
+            newIndex = getMove(player);
         }
 
         tempGrid = addCharacterToGrid(tempGrid, newIndex, playerCharacter);
@@ -175,17 +182,6 @@ Player getCurrentPlayer(int numMoves, Player player1, Player player2)
     }
 
     return player2;
-}
-
-int getMove(Player currentPlayer)
-{
-    string name = currentPlayer.nickname;
-    int coordinate;
-
-    cout << "(" + name + ")" + " Enter coordinate between 0-9 :\n";
-    cin >> coordinate;
-
-    return coordinate;
 }
 
 int main()
