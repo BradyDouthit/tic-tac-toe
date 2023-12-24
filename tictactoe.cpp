@@ -52,19 +52,6 @@ vector<string> buildGrid()
 
 bool validatePlayerMove(vector<string> grid, int index)
 {
-    string stringAtIndex = grid[index];
-    string empty = "-";
-    string emptyAtEnd = empty + "\n";
-    
-    // remove newlines from the grid at index position
-    stringAtIndex.erase(remove(stringAtIndex.begin(), stringAtIndex.end(), '\n'), stringAtIndex.end());
-    bool positionIsEmpty = stringAtIndex == empty;
-    
-    cout << "Validating\n";
-    cout << "Player is attempting index " << index << '\n';
-    cout << "Character at index " << index << " is " << stringAtIndex << "\n";
-    cout << "Is Position Empty " << positionIsEmpty << "\n";
-
     if (index > grid.size())
     {
         return false;
@@ -74,10 +61,20 @@ bool validatePlayerMove(vector<string> grid, int index)
     {
         return false;
     }
-
-    if (!positionIsEmpty)
+    else
     {
-        return false;
+        string stringAtIndex = grid[index];
+        string empty = "-";
+        string emptyAtEnd = empty + "\n";
+
+        // remove newlines from the grid at index position
+        stringAtIndex.erase(remove(stringAtIndex.begin(), stringAtIndex.end(), '\n'), stringAtIndex.end());
+        bool positionIsEmpty = stringAtIndex == empty;
+
+        if (!positionIsEmpty)
+        {
+            return false;
+        }
     }
 
     return true;
@@ -119,14 +116,13 @@ vector<string> applyUserInput(vector<string> grid, int gridIndex, Player player)
     else
     {
         int newIndex = -1;
-        cout << "INVALID\n";
 
         while (!validatePlayerMove(tempGrid, newIndex))
         {
             cout << "Invalid move. Enter a new number\n";
             cin >> newIndex;
         }
-        cout << "ADD CHAR " + newIndex;
+
         tempGrid = addCharacterToGrid(tempGrid, newIndex, playerCharacter);
     }
 
