@@ -78,6 +78,10 @@ int getMove(Player currentPlayer)
     string name = currentPlayer.nickname;
     int coordinate;
 
+    // ignore non integers
+    cin.clear();
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
     cout << "(" + name + ")" + " Enter coordinate between 1-9 :\n";
     cin >> coordinate;
     
@@ -106,21 +110,21 @@ vector<char> applyUserInput(vector<char> grid, int gridIndex, Player player)
     if (validatePlayerMove(tempGrid, gridIndex))
     {
         tempGrid = addCharacterToGrid(tempGrid, gridIndex, playerCharacter);
+        return tempGrid;
     }
     else
     {
         int newIndex = -1;
-        cout << newIndex << "\n";
-        while (!validatePlayerMove(tempGrid, newIndex))
+        do
         {
-            cout << "Invalid move. Enter a new number\n";
+            cout << "Invalid move.\n";
             newIndex = getMove(player);
-        }
+        } while (!validatePlayerMove(tempGrid, newIndex));
 
         tempGrid = addCharacterToGrid(tempGrid, newIndex, playerCharacter);
-    }
 
-    return tempGrid;
+        return tempGrid;
+    }
 }
 
 Player getPlayer1()
